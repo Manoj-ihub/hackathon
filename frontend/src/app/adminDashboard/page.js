@@ -74,25 +74,6 @@ const AdminDashboard = () => {
     fetchProducts();
   }, []);
 
-  const handleQuickAction = async (id, action) => {
-    setProcessingIds(prev => new Set(prev).add(id));
-    
-    try {
-      await axios.patch(`/api/admin/products/${id}/${action}`, {}, headers);
-      // Refresh the data after action
-      await fetchProducts();
-    } catch (err) {
-      console.error(`Failed to ${action} product`, err);
-      alert("Something went wrong");
-    } finally {
-      setProcessingIds(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(id);
-        return newSet;
-      });
-    }
-  };
-
   const stats = [
     {
       title: "Total Products",
@@ -539,48 +520,7 @@ const AdminDashboard = () => {
                     price={product.price}
                     status={product.status}
                   />
-                  {/* Quick Action Buttons */}
-                  <Stack
-                    direction="row"
-                    spacing={1}
-                    sx={{
-                      position: "absolute",
-                      bottom: 16,
-                      left: 16,
-                      right: 16,
-                    }}
-                  >
-                    <Button
-                      variant="contained"
-                      color="success"
-                      size="small"
-                      startIcon={<CheckCircleIcon />}
-                      onClick={() => handleQuickAction(product._id, "approved")}
-                      disabled={processingIds.has(product._id)}
-                      sx={{
-                        flex: 1,
-                        fontSize: "0.75rem",
-                        py: 0.5,
-                      }}
-                    >
-                      Approve
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      size="small"
-                      startIcon={<CancelIcon />}
-                      onClick={() => handleQuickAction(product._id, "rejected")}
-                      disabled={processingIds.has(product._id)}
-                      sx={{
-                        flex: 1,
-                        fontSize: "0.75rem",
-                        py: 0.5,
-                      }}
-                    >
-                      Reject
-                    </Button>
-                  </Stack>
+                  
                 </Box>
               ))}
             </Box>

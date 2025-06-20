@@ -7,6 +7,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { CloudUpload, Restaurant, AttachMoney, Description, Image as ImageIcon } from "@mui/icons-material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import axios from '../../utils/axiosInstance'
+import { useRouter } from 'next/navigation'
 
 // Create a custom blue theme
 const blueTheme = createTheme({
@@ -73,10 +75,9 @@ const CreateProduct = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Simulated router and localStorage for demo
-  const router = { push: (path) => console.log(`Navigating to: ${path}`) };
-  const token = "demo-token";
-  const email = "vendor@example.com";
+  const router = useRouter()
+  const token = localStorage.getItem("token")
+  const email = localStorage.getItem("email")
 
   const formik = useFormik({
     initialValues: {
@@ -93,16 +94,7 @@ const CreateProduct = () => {
     }),
     onSubmit: async (values) => {
       setIsSubmitting(true);
-      
-      // Simulate API call
-      setTimeout(() => {
-        console.log("Product created:", values);
-        alert("Product created successfully!");
-        setIsSubmitting(false);
-        router.push("/vendorDashboard");
-      }, 2000);
 
-      /* Original API call code:
       const formData = new FormData();
       formData.append("name", values.name);
       formData.append("description", values.description);
@@ -125,7 +117,7 @@ const CreateProduct = () => {
       } finally {
         setIsSubmitting(false);
       }
-      */
+      
     }
   });
 
