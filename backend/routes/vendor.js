@@ -19,6 +19,9 @@ router.patch("/orders/:id/confirm", vendorController.confirmOrder);
 router.get("/my-orders", vendorController.getMyOrders);
 router.patch("/order-status/:id", vendorController.updateOrderStatus);
 
+router.get("/products/pending", vendorController.getMyPendingProducts);
+
+
 
 module.exports = router;
 

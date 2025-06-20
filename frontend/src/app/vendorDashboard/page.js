@@ -37,6 +37,7 @@ const VendorDashboard = () => {
 
   const [approvedProducts, setApprovedProducts] = useState([]);
   const [rejectedProducts, setRejectedProducts] = useState([]);
+  const [pendingProducts, setPendingProducts] = useState([])
 
   const headers = {
     headers: { Authorization: `Bearer ${token}` },
@@ -53,8 +54,14 @@ const VendorDashboard = () => {
           `/api/vendor/products/rejected?email=${email}`,
           headers
         );
+        const pendingproductres = await axios.get(
+          `/api/vendor/products/pending?email=${email}`,
+          headers
+        )
         setApprovedProducts(approvedRes.data);
         setRejectedProducts(rejectedRes.data);
+        setPendingProducts(pendingproductres.data);
+
       } catch (err) {
         console.error(err);
       }
@@ -253,6 +260,91 @@ const VendorDashboard = () => {
             </Grid>
           ))}
         </Grid>
+
+        {/* Pending Products Section */}
+        {pendingProducts.length > 0 ? (
+        <Paper
+          elevation={0}
+          sx={{
+            p: 4,
+            mb: 4,
+            borderRadius: 3,
+            border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`,
+          }}
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={3}
+          >
+            <Box>
+              <Typography variant="h5" fontWeight="600" mb={1}>
+                 Products Pending Approval
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Your products that are waiting for Approval
+              </Typography>
+            </Box>
+            <Chip
+              icon={<CheckCircleIcon />}
+              label={`${pendingProducts.length} Products`}
+              color="success"
+              variant="outlined"
+            />
+          </Stack>
+          <Divider sx={{ mb: 3 }} />
+          {pendingProducts.length > 0 ? (
+            <Box
+              sx={{
+                display: "flex",
+                overflowX: "auto",
+                gap: 2,
+                pb: 2,
+                "&::-webkit-scrollbar": {
+                  height: 8,
+                },
+                "&::-webkit-scrollbar-track": {
+                  backgroundColor: alpha(theme.palette.grey[300], 0.3),
+                  borderRadius: 4,
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: alpha(theme.palette.primary.main, 0.5),
+                  borderRadius: 4,
+                },
+              }}
+            >
+              {pendingProducts.map((product) => (
+                <ProductCard
+                  key={product._id}
+                  image={`http://localhost:5000/${product.image}`}
+                  name={product.name}
+                  description={product.description}
+                  price={product.price}
+                  status={product.status}
+                />
+              ))}
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                textAlign: "center",
+                py: 6,
+                color: "text.secondary",
+              }}
+            >
+              <RestaurantIcon sx={{ fontSize: 64, mb: 2, opacity: 0.3 }} />
+              <Typography variant="h6" mb={1}>
+                Create Your New Product for Approval
+              </Typography>
+              <Typography variant="body2">
+                Create your New Product product to get started!
+              </Typography>
+            </Box>
+          )}
+        </Paper>
+        ):""
+        }
 
         {/* Approved Products Section */}
         <Paper

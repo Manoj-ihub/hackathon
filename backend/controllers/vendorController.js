@@ -105,3 +105,15 @@ exports.updateOrderStatus = async (req, res) => {
 
   res.json({ message: `Order marked as ${updatedStatus}`, order });
 };
+
+
+exports.getMyPendingProducts = async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    const products = await Product.find({ vendorEmail: email, status: "pending" }).sort({ createdAt: -1 });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
