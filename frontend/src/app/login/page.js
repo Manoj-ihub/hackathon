@@ -37,12 +37,14 @@ const Login = () => {
           password: values.password,
         });
 
-        const { token, name, role } = res.data;
+        const { token, name, role, email } = res.data;
 
         // ✅ Save to localStorage
         localStorage.setItem("token", token);
         localStorage.setItem("name", name);
         localStorage.setItem("role", role);
+        localStorage.setItem("email", email);
+
 
         alert("Login successful!");
         router.push("/dashboard");
@@ -53,6 +55,8 @@ const Login = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("name");
         localStorage.removeItem("role");
+        localStorage.removeItem("email");
+
 
         if (message === "Invalid credentials") {
           alert("Invalid credentials");

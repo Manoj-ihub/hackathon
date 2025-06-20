@@ -17,7 +17,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 
 
-const roles = ["admin", "user", "moderator"];
+const roles = ["admin", "vendor", "organizer"];
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Name is required"),
