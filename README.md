@@ -30,3 +30,8 @@ Technology Used:
 Packages Used
 
     *express, cors, mongoose, bycrpt, jwtwebtoken, dotenv,MUI, yup, axios
+
+
+Architecture:
+
+    FrontEnd -> Public  -> EventCrave.jpg
