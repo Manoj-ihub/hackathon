@@ -9,23 +9,23 @@ exports.createProduct = async (req, res) => {
     const image = req.file ? req.file.path : null;
 
     let place = "Unknown Location";
-console.log(place,"place")
-     try {
-    const response = await axios.get("https://nominatim.openstreetmap.org/reverse", {
-      params: {
-        lat: latitude,
-        lon: longitude,
-        format: "json",
-      },
-    });
-    console.log("Reverse geocoding response:", response);
+    console.log(place,"place")
+  //    try {
+  //   const response = await axios.get("https://nominatim.openstreetmap.org/reverse", {
+  //     params: {
+  //       lat: latitude,
+  //       lon: longitude,
+  //       format: "json",
+  //     },
+  //   });
+  //   console.log("Reverse geocoding response:", response);
 
-    place = response.data.display_name || "Unknown Location";
+  //   place = response.data.display_name || "Unknown Location";
 
-  } catch (err) {
-    console.error("Reverse geocoding failed:", err.message);
-    res.status(500).json({ error: "Reverse geocoding failed" });
-  }
+  // } catch (err) {
+  //   console.error("Reverse geocoding failed:", err.message);
+  //   res.status(500).json({ error: "Reverse geocoding failed" });
+  // }
 
     const product = new Product({
       name,
