@@ -1,3 +1,5 @@
+langchain
+langchain-google-genai
 pymongo
 requests
 python-dotenv

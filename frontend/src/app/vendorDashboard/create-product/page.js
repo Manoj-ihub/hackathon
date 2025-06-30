@@ -74,8 +74,6 @@ const blueTheme = createTheme({
 const CreateProduct = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
 
 
   const router = useRouter()

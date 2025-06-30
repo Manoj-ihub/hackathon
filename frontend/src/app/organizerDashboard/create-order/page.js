@@ -101,6 +101,8 @@ const CreateOrder = () => {
   const [quantities, setQuantities] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
 
   const headers = {
     headers: { Authorization: `Bearer ${token}` }
@@ -118,6 +120,24 @@ const CreateOrder = () => {
     };
 
     fetchProducts();
+
+      if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLatitude(position.coords.latitude);
+        setLongitude(position.coords.longitude);
+
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        alert("Please allow location access to create a product.");
+      }
+    );
+  } else {
+    alert("Geolocation is not supported by your browser.");
+  }
+
+
   }, []);
 
   const handleQuantityChange = (id, change) => {
@@ -154,7 +174,9 @@ const CreateOrder = () => {
     try {
       await axios.post("/api/organizer/orders", {
         organizerEmail: email,
-        products: orderItems
+        products: orderItems,
+        latitude: latitude,
+        longitude: longitude,
       }, headers);
 
       setSnackbar({ open: true, message: "Order placed successfully! 🎉", severity: "success" });

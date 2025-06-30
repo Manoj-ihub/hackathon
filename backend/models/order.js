@@ -3,6 +3,19 @@ const mongoose = require("mongoose");
 const orderSchema = new mongoose.Schema({
   organizerEmail: String,
   place: String,
+  
+  location: {
+    type: {
+      type: String,
+      enum: ["Point"],
+      default: "Point",
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+  },
+
   products: [
     {
       productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },

@@ -1,10 +1,12 @@
+# main.py
+from controllers.run_agent import enrich_collection_with_place
 import schedule
 import time
-from controllers.enrich_agent import enrich_products_with_place
 
 def job():
     print("Running GeoAgent background job...")
-    enrich_products_with_place()
+    enrich_collection_with_place("products")
+    enrich_collection_with_place("orders")
 
 schedule.every(5).minutes.do(job)
 

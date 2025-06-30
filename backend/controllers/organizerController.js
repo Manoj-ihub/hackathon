@@ -4,14 +4,21 @@ const Product = require("../models/product");
 // Create an order
 exports.createOrder = async (req, res) => {
   try {
-    const { organizerEmail, products } = req.body;
+    const { organizerEmail, products, latitude, longitude } = req.body;
+
+    let place = "Unknown Location";
 
     const order = new Order({
       organizerEmail,
       products,
       status: "pending",
       rejected: [],
-      vendorEmail: null
+      vendorEmail: null,
+      location: {
+        type: "Point",
+        coordinates: [parseFloat(longitude), parseFloat(latitude)],
+      },
+      place,
     });
 
     await order.save();
