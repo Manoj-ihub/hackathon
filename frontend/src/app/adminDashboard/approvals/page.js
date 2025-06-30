@@ -344,7 +344,6 @@ const ApprovalsPage = () => {
 
                             <Stack direction="row" spacing={2} alignItems="center">
                               <Chip
-                                icon={<AttachMoney />}
                                 label={`₹${product.price}`}
                                 color="primary"
                                 variant="filled"

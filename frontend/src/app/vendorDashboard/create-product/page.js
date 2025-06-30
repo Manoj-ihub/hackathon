@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box, Button, TextField, Typography, Stack, Paper, Avatar, Fade, Slide
 } from "@mui/material";
@@ -74,17 +74,42 @@ const blueTheme = createTheme({
 const CreateProduct = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+
 
   const router = useRouter()
   const token = localStorage.getItem("token")
   const email = localStorage.getItem("email")
+
+useEffect(() => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        formik.setFieldValue("latitude", position.coords.latitude);
+        formik.setFieldValue("longitude", position.coords.longitude);
+        // formik.setFieldValue("place", "Guindy, Chennai");
+
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        alert("Please allow location access to create a product.");
+      }
+    );
+  } else {
+    alert("Geolocation is not supported by your browser.");
+  }
+}, []);
+
 
   const formik = useFormik({
     initialValues: {
       name: "",
       description: "",
       price: "",
-      image: null
+      image: null,
+      latitude: 0,
+      longitude: 0,
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Product name is required"),
@@ -101,6 +126,8 @@ const CreateProduct = () => {
       formData.append("price", values.price);
       formData.append("image", values.image);
       formData.append("vendorEmail", email);
+      formData.append("latitude", values.latitude);
+      formData.append("longitude", values.longitude);
 
       try {
         await axios.post("/api/vendor/products", formData, {

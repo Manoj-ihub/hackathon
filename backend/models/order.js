@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
   organizerEmail: String,
+  place: String,
   products: [
     {
       productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },

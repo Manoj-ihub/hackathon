@@ -13,9 +13,11 @@ app.use(cors({
   credentials: true               
 }));
 
+console.log("jiiiii");
+
+
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
-
 
 app.use("/api/vendor", vendorRoutes);
 app.use("/api/admin", adminRoutes);

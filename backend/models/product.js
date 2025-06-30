@@ -11,7 +11,25 @@ const productSchema = new mongoose.Schema({
     enum: ["pending", "approved", "rejected"],
     default: "pending",
   },
-  rejectionReason: String
+  rejectionReason: String,
+  place: String,
+
+  location: {
+    type: {
+      type: String,
+      enum: ["Point"],
+      default: "Point",
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+  },
+
 }, { timestamps: true });
+
+productSchema.index({ location: "2dsphere" });
+
+
 
 module.exports = mongoose.model("Product", productSchema);
