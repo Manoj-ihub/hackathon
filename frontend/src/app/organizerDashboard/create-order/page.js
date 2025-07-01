@@ -109,23 +109,35 @@ const CreateOrder = () => {
   };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await axios.get("/api/organizer/products/recent", headers);
+    // const fetchProducts = async () => {
+    //   try {
+    //     const res = await axios.get("/api/organizer/products/recent", headers);
+    //     setProducts(res.data);
+    //   } catch (err) {
+    //     console.error("Error loading products:", err);
+    //     setSnackbar({ open: true, message: "Failed to load products", severity: "error" });
+    //   }
+    // };
+
+    // fetchProducts();
+
+      if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+
+     async (position) => {
+        setLatitude(position.coords.latitude);
+        setLongitude(position.coords.longitude);
+
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        try {
+        const res = await axios.get(`/api/organizer/products/recent?latitude=${lat}&longitude=${lon}`, headers);
         setProducts(res.data);
       } catch (err) {
         console.error("Error loading products:", err);
         setSnackbar({ open: true, message: "Failed to load products", severity: "error" });
       }
-    };
-
-    fetchProducts();
-
-      if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLatitude(position.coords.latitude);
-        setLongitude(position.coords.longitude);
 
       },
       (error) => {

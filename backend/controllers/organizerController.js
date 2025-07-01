@@ -36,7 +36,42 @@ exports.getMyOrders = async (req, res) => {
 };
 
 // Get recent approved products
+// exports.getRecentProducts = async (req, res) => {
+//   const { latitude, longitude } = req.query;
+//   const products = await Product.find({ status: "approved" }).sort({ createdAt: -1 }).limit(10);
+//   res.json(products);
+// };
+
+// Get recent approved products within 20 km
 exports.getRecentProducts = async (req, res) => {
-  const products = await Product.find({ status: "approved" }).sort({ createdAt: -1 }).limit(10);
-  res.json(products);
+  const { latitude, longitude } = req.query;
+
+  if (!latitude || !longitude) {
+    return res.status(400).json({ error: "Latitude and longitude are required" });
+  }
+
+  const lat = parseFloat(latitude);
+  const lon = parseFloat(longitude);
+
+  try {
+    const products = await Product.find({
+      status: "approved",
+      location: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: [lon, lat]
+          },
+          $maxDistance: 20000 // 20 km in meters
+        }
+      }
+    })
+      .sort({ createdAt: -1 })
+      .limit(10);
+
+    res.json(products);
+  } catch (err) {
+    console.error("Error fetching nearby products:", err);
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
 };

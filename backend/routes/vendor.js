@@ -11,7 +11,7 @@ router.get("/products/approved", vendorController.getApprovedProducts);
 router.get("/products/rejected", vendorController.getRejectedProducts);
 
 // Get pending orders
-router.get("/orders/pending", vendorController.getPendingOrders);
+router.get("/orders/pending", vendorController.getNearbyPendingOrders );
 
 // Confirm order
 router.patch("/orders/:id/confirm", vendorController.confirmOrder);

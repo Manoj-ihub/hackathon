@@ -1,4 +1,5 @@
 langchain
+geopy
 langchain-google-genai
 pymongo
 requests

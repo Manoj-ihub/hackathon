@@ -1,0 +1,7 @@
+# Ignore Python agent files
+geo-agent/__pycache__/
+geo-agent/*.py[cod]
+geo-agent/.env
+geo-agent/venv/
+geo-agent/.venv/
+geo-agent/*.log

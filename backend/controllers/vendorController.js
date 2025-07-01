@@ -1,6 +1,8 @@
 const Product = require("../models/product");
 const Order = require("../models/order");
 const { default: axios } = require("axios");
+const { spawn } = require("child_process");
+const { EJSON } = require("bson");
 
 // Create product
 exports.createProduct = async (req, res) => {
@@ -35,7 +37,7 @@ exports.createProduct = async (req, res) => {
       image,
       location: {
         type: "Point",
-        coordinates: [parseFloat(longitude), parseFloat(latitude)],
+        coordinates: [parseFloat(latitude), parseFloat(longitude)],
       },
       place,
     });
@@ -61,9 +63,9 @@ exports.getRejectedProducts = async (req, res) => {
   res.json(products);
 };
 
-// Get pending orders visible to vendor
+// Get pending orders visible to vendor    // Agent Instead Used
 exports.getPendingOrders = async (req, res) => {
-  const { email } = req.query;
+  const { email, latitude, longitude } = req.query;
   const orders = await Order.find({
     status: "pending",
     rejected: { $ne: email },
@@ -71,6 +73,51 @@ exports.getPendingOrders = async (req, res) => {
   }).populate("products.productId");
   res.json(orders);
 };
+
+
+
+exports.getNearbyPendingOrders = async (req, res) => {
+  const { latitude, longitude, email } = req.query;
+
+  const process = spawn("python", [
+    "geo-agent/controllers/run_nearby_agent.py",
+    latitude,
+    longitude,
+    email,
+  ]);
+
+  let result = "";
+
+  process.stdout.on("data", (data) => {
+    result += data.toString();
+  });
+
+  process.stderr.on("data", (data) => {
+    console.error(`Python Error: ${data}`);
+  });
+
+  process.on("close", async (code) => {
+    console.log("🔥 Raw output from Python:\n", result);
+    try {
+      const parsed = EJSON.parse(result);
+
+      // Populate `productId` for each order's product
+      for (const order of parsed) {
+        for (const product of order.products) {
+          const fullProduct = await Product.findById(product.productId).lean();
+          product.productId = fullProduct; // Replace ID string with actual object
+        }
+      }
+
+      res.json(parsed);
+    } catch (err) {
+      console.error("❌ JSON parse or populate error:", err);
+      res.status(500).json({ error: "Failed to parse or enrich response from Python agent." });
+    }
+  });
+};
+
+
 
 // Confirm an order
 exports.confirmOrder = async (req, res) => {

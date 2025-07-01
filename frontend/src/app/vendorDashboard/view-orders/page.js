@@ -44,20 +44,39 @@ const ViewOrders = () => {
     headers: { Authorization: `Bearer ${token}` }
   };
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await axios.get(`/api/vendor/orders/pending?email=${email}`, headers);
-        setOrders(res.data);
-      } catch (err) {
-        console.error("Failed to fetch orders", err);
-      } finally {
+ useEffect(() => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        console.log("Latitude:", latitude, "Longitude:", longitude);
+
+        try {
+          const res = await axios.get(
+            `/api/vendor/orders/pending?email=${email}&latitude=${latitude}&longitude=${longitude}`,
+            headers
+          );
+          setOrders(res.data);
+        } catch (err) {
+          console.error("Failed to fetch orders", err);
+        } finally {
+          setLoading(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        alert("Please allow location access to create a product.");
         setLoading(false);
       }
-    };
+    );
+  } else {
+    alert("Geolocation is not supported by your browser.");
+    setLoading(false);
+  }
+}, []);
 
-    fetchOrders();
-  }, []);
 
   const handleConfirm = async (orderId) => {
     try {
@@ -268,6 +287,9 @@ const ViewOrders = () => {
                               {order.organizerEmail}
                             </Typography>
                           </Stack>
+                          <Typography variant="body2" color="text.secondary">
+                              Place : {order?.place}
+                            </Typography>
                         </Box>
                       </Stack>
                       <Chip
