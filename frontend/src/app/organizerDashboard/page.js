@@ -61,11 +61,9 @@ const OrganizerDashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [res1, res2] = await Promise.all([
-          axios.get("/api/organizer/products/recent", headers),
+        const [res2] = await Promise.all([
           axios.get(`/api/organizer/orders?email=${email}`, headers),
         ]);
-        setRecentProducts(res1.data);
         setLastOrders(res2.data);
       } catch (err) {
         console.error("Error fetching organizer data", err);
@@ -75,6 +73,36 @@ const OrganizerDashboard = () => {
     };
 
     fetchData();
+
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+    
+         async (position) => {
+    
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+    
+            try {
+            const res = await axios.get(`/api/organizer/products/recent?latitude=${lat}&longitude=${lon}`, headers);
+            setRecentProducts(res.data);
+          } catch (err) {
+            console.error("Error loading products:", err);
+            setSnackbar({ open: true, message: "Failed to load products", severity: "error" });
+          }
+    
+          },
+          (error) => {
+            console.error("Geolocation error:", error);
+            alert("Please allow location access to create a product.");
+          }
+        );
+      } else {
+        alert("Geolocation is not supported by your browser.");
+      }
+
+
+
   }, []);
 
   const getOrderStatusConfig = (status) => {

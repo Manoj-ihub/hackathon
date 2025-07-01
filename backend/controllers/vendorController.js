@@ -28,6 +28,7 @@ exports.createProduct = async (req, res) => {
   //   console.error("Reverse geocoding failed:", err.message);
   //   res.status(500).json({ error: "Reverse geocoding failed" });
   // }
+  
 
     const product = new Product({
       name,
@@ -37,7 +38,7 @@ exports.createProduct = async (req, res) => {
       image,
       location: {
         type: "Point",
-        coordinates: [parseFloat(latitude), parseFloat(longitude)],
+        coordinates: [parseFloat(longitude), parseFloat(latitude)],
       },
       place,
     });
